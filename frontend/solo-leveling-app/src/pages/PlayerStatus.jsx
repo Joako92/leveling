@@ -1,47 +1,65 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import PlayerCreate from './PlayerCreate';
 
 const PlayerStatus = () => {
-  const [playerStatus, setPlayerStatus] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const userId = "67e71721881db86001415854"; 
+  const [player, setPlayer] = useState(null);
+  const [error, setError] = useState("");
+  const [playerId, setPlayerId] = useState(null); // Nuevo estado para el ID del jugador
 
   useEffect(() => {
     const fetchPlayerStatus = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/players/${userId}`);
-        setPlayerStatus(response.data); 
-        setLoading(false);
-      } catch (error) {
-        setError(error);
-        setLoading(false);
+        const token = localStorage.getItem("token");
+        if (!token) {
+          setError("Usuario no autenticado");
+          return;
+        }
+
+        const user = JSON.parse(atob(token.split(".")[1]));
+        const storedPlayerId = user.jugadorId;
+
+        if (!storedPlayerId) {
+          setPlayerId(null);
+          return;
+        }
+
+        setPlayerId(storedPlayerId);
+
+        const response = await axios.get(`http://localhost:3000/players/${storedPlayerId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        setPlayer(response.data);
+      } catch (err) {
+        console.error("Error al obtener el estado del jugador:", err);
+        setError("Error al cargar los datos del jugador");
       }
     };
 
     fetchPlayerStatus();
-  }, [userId]);
+  }, [playerId]);
 
-  if (loading) return <div>Cargando...</div>;
-  if (error) return <div>Error al cargar el estado del jugador: {error.message}</div>;
-
-  if (!playerStatus) {
-    return <div>No hay información del jugador disponible.</div>;
+  if (!playerId) {
+    return <PlayerCreate onClose={(newPlayerId) => setPlayerId(newPlayerId)} />;
   }
+
+  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (!player) return <p>Cargando estado del jugador...</p>;
 
   return (
     <div>
       <h1>Estado del Jugador</h1>
-      <p>Nombre: {playerStatus.nombre}</p>
-      <p>Nivel: {playerStatus.nivel}</p>
-      <p>Rango: {playerStatus.rango}</p>
-      <p>Título: {playerStatus.titulo}</p>
-      <p>Racha: {playerStatus.racha}</p>
+      <p>Nombre: {player.nombre}</p>
+      <p>Nivel: {player.nivel}</p>
+      <p>Rango: {player.rango}</p>
+      <p>Título: {player.titulo}</p>
+      <p>Racha: {player.racha}</p>
       <h2>Estadísticas</h2>
-      <p>Fuerza: {playerStatus.estadisticas.fuerza}</p>
-      <p>Agilidad: {playerStatus.estadisticas.agilidad}</p>
-      <p>Resistencia: {playerStatus.estadisticas.resistencia}</p>
-      <p>Inteligencia: {playerStatus.estadisticas.inteligencia}</p>
+      <p>Fuerza: {player.estadisticas.fuerza}</p>
+      <p>Agilidad: {player.estadisticas.agilidad}</p>
+      <p>Resistencia: {player.estadisticas.resistencia}</p>
+      <p>Inteligencia: {player.estadisticas.inteligencia}</p>
     </div>
   );
 };
