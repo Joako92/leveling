@@ -53,6 +53,11 @@ function Login() {
                 <input type="password" name="password" value={formData.password} onChange={handleChange} required />
 
                 <button type="submit">Ingresar</button>
+                <p>
+                <a href="/forgot-password" className="text-sm text-blue-500 hover:underline">
+                    ¿Olvidaste tu contraseña?
+                </a>
+                </p>
             </form>
         </div>
     );
