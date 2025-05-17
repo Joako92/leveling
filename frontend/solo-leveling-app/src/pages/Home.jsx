@@ -1,5 +1,5 @@
 import '../App.css';
-import SoloTrainingLogo from '../assets/solo-training-logo.png';
+import SoloTrainingLogo from '../assets/Logo.png';
 import { useNavigate } from 'react-router-dom';
 
 function Home() {

@@ -1,19 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const PlayerCreate = ({ onClose }) => {
   const [nombre, setNombre] = useState("");
+  const [userId, setUserId] = useState(null);
+  const navigate = useNavigate();
   const [respuestas, setRespuestas] = useState({
     pushUps: "",
     sentadillas: "",
     crunches: "",
     correrTiempo: "",
     problemasRespiratorios: "no",
-    deportesRapidos: "no",
-    movimientosRapidos: "no",
+    deportesRapidos: "si",
+    movimientosRapidos: "si",
     motivacion: "si",
     rendirse: "no",
   });
+
+  // Obtener el userId del token almacenado en localStorage
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const decodedToken = JSON.parse(atob(token.split(".")[1])); // Decodificar el payload del JWT
+      setUserId(decodedToken.userId);
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -22,6 +34,12 @@ const PlayerCreate = ({ onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!userId) {
+      alert("No se encontró el ID del usuario. Inicie sesión nuevamente.");
+      return;
+    }
+
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -34,15 +52,23 @@ const PlayerCreate = ({ onClose }) => {
         respuestas: Object.values(respuestas),
       };
 
-      const response = await axios.post("http://localhost:3000/players", body, {
+      const response = await axios.post(`http://localhost:3000/players/${userId}`, body, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      alert("Jugador creado con éxito");
+      if (response.data && response.data.playerId) {
+        //localStorage.setItem("playerId", response.data._id);
+        alert("Jugador creado con éxito");
 
-      // Redirigir al status del jugador recién creado
-      window.location.href = `/status`;
-      
+        // Llamar a onClose para actualizar `playerId` en App.js
+      if (onClose) {
+        onClose(response.data._id);
+      }
+
+        navigate("/status");
+      } else {
+        alert("Error: No se recibió el ID del jugador.");
+      }
     } catch (error) {
       console.error("Error al crear el jugador", error);
       alert("Error al crear el jugador");
@@ -55,7 +81,7 @@ const PlayerCreate = ({ onClose }) => {
         <div className="modal-content p-4">
           <h2 className="text-center">Crear Jugador</h2>
           <form onSubmit={handleSubmit} className="d-flex flex-column gap-2">
-            
+
             <div className="mb-3">
               <label className="form-label">Nombre de jugador:</label>
               <input type="text" className="form-control" value={nombre} onChange={(e) => setNombre(e.target.value)} required />

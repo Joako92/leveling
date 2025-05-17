@@ -15,30 +15,30 @@ const PlayerStatus = () => {
           setError("Usuario no autenticado");
           return;
         }
-
+  
         const user = JSON.parse(atob(token.split(".")[1]));
-        const storedPlayerId = user.jugadorId;
-
+        let storedPlayerId = localStorage.getItem("playerId") || user.jugadorId;
+  
         if (!storedPlayerId) {
           setPlayerId(null);
           return;
         }
-
+  
         setPlayerId(storedPlayerId);
-
+  
         const response = await axios.get(`http://localhost:3000/players/${storedPlayerId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-
+  
         setPlayer(response.data);
       } catch (err) {
         console.error("Error al obtener el estado del jugador:", err);
         setError("Error al cargar los datos del jugador");
       }
     };
-
+  
     fetchPlayerStatus();
-  }, [playerId]);
+  }, []);  
 
   if (!playerId) {
     return <PlayerCreate onClose={(newPlayerId) => setPlayerId(newPlayerId)} />;
