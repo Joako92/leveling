@@ -5,7 +5,7 @@ import PlayerCreate from './PlayerCreate';
 const PlayerStatus = () => {
   const [player, setPlayer] = useState(null);
   const [error, setError] = useState("");
-  const [playerId, setPlayerId] = useState(null); // Nuevo estado para el ID del jugador
+  const [playerId, setPlayerId] = useState(null);
 
   useEffect(() => {
     const fetchPlayerStatus = async () => {
