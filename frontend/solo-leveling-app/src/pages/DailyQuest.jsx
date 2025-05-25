@@ -96,7 +96,7 @@ export default function DailyQuest() {
           <ul className="list-disc pl-5 mt-2">
             {dailyQuest.map((ejer, i) => (
               <li key={i}>
-                {ejer.nombre} - {ejer.descripcion} - {ejer.grupo}
+                {ejer.nombre} Nv.{ejer.nivel} Xp.{ejer.xp} - {ejer.descripcion} - {ejer.grupo} - {ejer.repeticiones}
               </li>
             ))}
           </ul>
