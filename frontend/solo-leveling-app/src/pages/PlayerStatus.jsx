@@ -17,7 +17,7 @@ const PlayerStatus = () => {
         }
   
         const user = JSON.parse(atob(token.split(".")[1]));
-        let storedPlayerId = localStorage.getItem("playerId") || user.jugadorId;
+        let storedPlayerId = localStorage.getItem("jugadorId") || user.jugadorId;
   
         if (!storedPlayerId) {
           setPlayerId(null);
