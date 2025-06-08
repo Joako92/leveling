@@ -46,20 +46,20 @@ const PlayerStatus = () => {
 
   if (error) return <p style={{ color: "red" }}>{error}</p>;
   if (!player) return <p>Cargando estado del jugador...</p>;
+  let availablePoints = (player.nivel * 5)
 
   return (
     <div>
       <h1>Estado del Jugador</h1>
-      <p>Nombre: {player.nombre}</p>
-      <p>Nivel: {player.nivel}</p>
-      <p>Rango: {player.rango}</p>
-      <p>Título: {player.titulo}</p>
-      <p>Racha: {player.racha}</p>
-      <h2>Estadísticas</h2>
-      <p>Fuerza: {player.estadisticas.fuerza}</p>
-      <p>Agilidad: {player.estadisticas.agilidad}</p>
-      <p>Resistencia: {player.estadisticas.resistencia}</p>
-      <p>Inteligencia: {player.estadisticas.inteligencia}</p>
+      <h2>----------♦</h2>
+      <p>Nombre: {player.nombre} - Nivel: {player.nivel}</p>
+      <p>Rango: {player.rango} - Título: {player.titulo}</p>
+      <p>XP: {player.racha}</p>
+      <h2>----------♦</h2>
+      <p>Fuerza: {player.estadisticas.fuerza} - Resistencia: {player.estadisticas.resistencia}</p>
+      <p>Agilidad: {player.estadisticas.agilidad} - Inteligencia: {player.estadisticas.inteligencia}</p>
+      <p>Puntos disponibles: {availablePoints}</p>
+      <h2>----------♦</h2>
     </div>
   );
 };

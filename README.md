@@ -8,6 +8,7 @@ Run for developing:
     Frontend:
     - npm run dev
 # TO DO
+* Si el jugador esta logeado: que el home te lleve directamente a status
 Ahora funcionan las pantallas Status y Quest, falta:
 * Que el status determine el nivel del jugador (con exp o con racha, o ambos)
 * Que los ejercicios del inventario se puedan agregar a la questDiaria

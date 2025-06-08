@@ -8,8 +8,8 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
-import NavigationMenu from "./components/NavigationMenu";
 import { isAuthenticated } from './utils/auth';
+import BottomNav from './components/BottomNav';
 
 function AppContent() {
   const location = useLocation();
@@ -17,7 +17,7 @@ function AppContent() {
   const shouldShowMenu = isAuthenticated() && !hideMenuRoutes.includes(location.pathname);
 
   return (
-    <div className="pb-20">
+    <div className="pb-14">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/status" element={<PlayerStatus />} />
@@ -28,8 +28,8 @@ function AppContent() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
-
-      {shouldShowMenu && <NavigationMenu />}
+      
+      {shouldShowMenu && <BottomNav />}
     </div>
   );
 }
