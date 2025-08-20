@@ -1,0 +1,30 @@
+/* PlayerCreate.css */
+
+.create-container {
+  padding: 20px;
+  background-color: #2e2e2e;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(255, 76, 76, 0.5);
+  max-width: 500px;
+  margin: auto;
+}
+
+.create-container h2 {
+  color: #ff4c4c;
+  margin-bottom: 15px;
+}
+
+.create-container label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.create-container input,
+.create-container select {
+  margin-bottom: 15px;
+}
+
+.create-container button {
+  width: 100%;
+}

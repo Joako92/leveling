@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import PlayerCreate from './PlayerCreate';
+import './PlayerStatus.css';
 
 const PlayerStatus = () => {
   const [player, setPlayer] = useState(null);
@@ -46,20 +47,44 @@ const PlayerStatus = () => {
 
   if (error) return <p style={{ color: "red" }}>{error}</p>;
   if (!player) return <p>Cargando estado del jugador...</p>;
-  let availablePoints = (player.nivel * 5)
+  let availablePoints = (player.nivel * 5);
 
   return (
-    <div>
-      <h1>Estado del Jugador</h1>
-      <h2>----------♦</h2>
-      <p>Nombre: {player.nombre} - Nivel: {player.nivel}</p>
-      <p>Rango: {player.rango} - Título: {player.titulo}</p>
-      <p>XP: {player.racha}</p>
-      <h2>----------♦</h2>
-      <p>Fuerza: {player.estadisticas.fuerza} - Resistencia: {player.estadisticas.resistencia}</p>
-      <p>Agilidad: {player.estadisticas.agilidad} - Inteligencia: {player.estadisticas.inteligencia}</p>
-      <p>Puntos disponibles: {availablePoints}</p>
-      <h2>----------♦</h2>
+    <div className="home-container">
+      <div className="status-window">
+        <h2 className="window-title">VENTANA DE ESTADO</h2>
+
+        <div className="section general-info">
+          <p><strong>Nombre:</strong> {player.nombre} <strong>Nivel:</strong> {player.nivel}</p>
+          <p><strong>Rango:</strong> {player.rango} <strong>Título:</strong> {player.titulo}</p>
+        </div>
+
+        <hr className="divider" />
+
+        <div className="section hp-mp">
+          <p><strong>HP:</strong> {player.hp} <strong>MP:</strong> {player.mp}</p>
+        </div>
+
+        <hr className="divider" />
+
+        <div className="section stats">
+          <p><strong>Fuerza:</strong> {player.estadisticas.fuerza} <strong>Resistencia:</strong> {player.estadisticas.resistencia}</p>
+          <p><strong>Agilidad:</strong> {player.estadisticas.agilidad} <strong>Inteligencia:</strong> {player.estadisticas.inteligencia}</p>
+        </div>
+
+        <hr className="divider" />
+
+        <div className="section points">
+          <p><strong>Puntos disponibles:</strong> {availablePoints}</p>
+        </div>
+
+        <hr className="divider" />
+
+        <div className="section skills">
+          <p><strong>Habilidades pasivas:</strong> Ninguna</p>
+          <p><strong>Habilidades activas:</strong> Autoridad de Gobernante: LV. {player.nivel}</p>
+        </div>
+      </div>
     </div>
   );
 };

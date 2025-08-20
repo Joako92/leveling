@@ -1,4 +1,5 @@
 import React from 'react';
+import './style.css';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Home from './pages/Home';
 import PlayerStatus from './pages/PlayerStatus';

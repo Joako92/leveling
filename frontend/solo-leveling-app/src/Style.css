@@ -1,0 +1,116 @@
+/* Fondo y tipografía global */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #1a1a1a;
+  color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* asegura ocupar toda la pantalla */
+}
+
+/* Contenedor principal de Home */
+.home-container {
+  flex: 1; /*ocupa todo el espacio disponible */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* centra verticalmente */
+  min-height: 100vh; /* Ocupa toda la pantalla */
+  align-items: center; /* centra horizontalmente */
+  padding-bottom: 80px; /* deja espacio para el bottomNav */
+}
+
+/* Logo */
+.logo {
+  max-width: 350px;
+  width: 100%;
+  height: auto;
+  margin-bottom: 40px;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+/* Ventana de estado */
+.status-window {
+  width: 320px;
+  padding: 20px 25px;
+  background: linear-gradient(145deg, #2b2b2b, #1f1f1f);
+  border: 2px solid #d4af37; /* dorado */
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+  color: #fff;
+  text-align: center;
+  margin: 0 auto;
+  z-index: 1;
+}
+
+/* Título */
+.status-window h2 {
+  font-family: 'Orbitron', sans-serif;
+  color: #ffd700; /* dorado */
+  text-shadow: 0 0 8px #ffd700, 0 0 12px #fff;
+  margin-bottom: 20px;
+}
+
+/* Botones */
+.red-button {
+  display: block;
+  width: 100%;
+  background-color: #ff4c4c;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  margin: 8px 0;
+  border-radius: 12px;
+  font-weight: bold;
+  font-family: 'Orbitron', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 0 8px #ff4c4c;
+  transition: all 0.2s;
+}
+.red-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 12px #ff4c4c, 0 0 20px #ff8c00;
+}
+
+/* Formulario dentro de status-window */
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+  text-align: left;
+}
+
+/* Inputs */
+.input-field {
+  padding: 10px;
+  border: 2px solid #d4af37;
+  border-radius: 8px;
+  background-color: #1a1a1a;
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: 0.3s;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #ffd700;
+  box-shadow: 0 0 8px #ffd700;
+}
+
+/* Link recuperar contraseña */
+.link {
+  font-size: 0.9rem;
+  color: #ffd700;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.link:hover {
+  text-decoration: underline;
+  text-shadow: 0 0 8px #ffd700;
+}

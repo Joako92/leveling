@@ -1,4 +1,6 @@
+//DailyQuest.jsx
 import React, { useState, useEffect } from 'react';
+import './DailyQuest.css';
 
 export default function DailyQuest() {
   const [showInventory, setShowInventory] = useState(false);
@@ -7,12 +9,15 @@ export default function DailyQuest() {
   const [dailyQuest, setDailyQuest] = useState(null);
   const [loadingQuest, setLoadingQuest] = useState(true);
   const [questError, setQuestError] = useState(null);
+  const [selectedExercise, setSelectedExercise] = useState(null);
+  const [completedExercises, setCompletedExercises] = useState({}); // Al cambiar de pagina vuelve al estado inicial TODO!
 
   const fetchDailyQuest = async () => {
     try {
       const token = localStorage.getItem('token');
       const user = JSON.parse(atob(token.split(".")[1]));
       const playerId = localStorage.getItem('jugadorId') || user.jugadorId;
+
       if (!token || !playerId) {
         setQuestError("Faltan credenciales del jugador");
         setLoadingQuest(false);
@@ -24,12 +29,12 @@ export default function DailyQuest() {
           Authorization: `Bearer ${token}`,
         },
       });
-      const data = await response.json();
 
       if (!response.ok) {
         throw new Error('Error al obtener la quest diaria');
       }
 
+      const data = await response.json();
       setDailyQuest(data);
     } catch (error) {
       console.error('Error al cargar la quest diaria:', error);
@@ -43,6 +48,7 @@ export default function DailyQuest() {
     fetchDailyQuest();
   }, []);
 
+  // Cargar inventario de ejercicios
   const toggleInventory = () => {
     setShowInventory(!showInventory);
   };
@@ -86,6 +92,7 @@ export default function DailyQuest() {
     return sortConfig.direction === 'asc' ? '⬆️' : '⬇️';
   };
 
+  // Quitar ejercicio de la quest diaria
   const handleRemoveFromQuest = async (questExerciseId) => {
   const confirmDelete = window.confirm("¿Seguro desea eliminar el ejercicio? Se perderá la XP acumulada.");
   if (!confirmDelete) return;
@@ -110,6 +117,7 @@ export default function DailyQuest() {
   }
 };
 
+  // Agregar ejercicio a la quest diaria
   const handleAddToQuest = async (exerciseId) => {
     try {
       const token = localStorage.getItem('token');
@@ -138,99 +146,167 @@ export default function DailyQuest() {
     }
   };
 
+  // Marcar ejercicio como completo
+  const handleCompleteExercise = async (exerciseId) => {
+    try {
+      const token = localStorage.getItem('token');
+
+      const response = await fetch('http://localhost:3000/quest/complete', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ exerciseId }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Error al completar ejercicio');
+      }
+
+      const data = await response.json();
+      console.log('Ejercicio completado: ', data);
+
+      fetchDailyQuest();
+    } catch (error) {
+      console.error('Error al completar ejercicio: ', error.message);
+      alert('No se pudo completar el ejercicio: ' + error.message);
+    }
+
+    setCompletedExercises((prev) => ({
+      ...prev,
+      [exerciseId]: true,
+    }));
+  };
+
   return (
-    <div className="p-4">
-      <div className="mb-4">
-        <h2 className="text-2xl font-bold">Quest Diaria</h2>
-        {loadingQuest && <p>Cargando quest...</p>}
-        {questError && <p style={{ color: 'red' }}>{questError}</p>}
-        {dailyQuest && (
-          <table className="w-full border border-gray-300 text-sm mt-4">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="py-2 px-4 border">Ejercicio</th>
-                <th className="py-2 px-4 border">Nivel</th>
-                <th className="py-2 px-4 border">XP</th>
-                <th className="py-2 px-4 border">Grupo</th>
-                <th className="py-2 px-4 border">Descripción</th>
-                <th className="py-2 px-4 border">Repeticiones</th>
-                <th className="py-2 px-4 border">Quitar</th>
-              </tr>
-            </thead>
-            <tbody>
-              {dailyQuest.map((ejer) => (
-                <tr key={ejer._id} className="hover:bg-gray-50">
-                  <td className="py-2 px-4 border">{ejer.nombre}</td>
-                  <td className="py-2 px-4 border text-center">Nv.{ejer.nivel}</td>
-                  <td className="py-2 px-4 border text-center">{ejer.xp}</td>
-                  <td className="py-2 px-4 border capitalize text-center">{ejer.grupo}</td>
-                  <td className="py-2 px-4 border">{ejer.descripcion}</td>
-                  <td className="py-2 px-4 border text-center">{ejer.repeticiones}</td>
-                  <td className="py-2 px-4 border text-center">
-                    <button
-                      onClick={() => handleRemoveFromQuest(ejer._id)}
-                      className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded"
-                      title="Eliminar ejercicio"
-                    >
-                      -
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+    <div className='home-container'>
+      <div className="daily-quest-window">
+        <div className="mb-4">
+          <h2 className="window-title">QUEST DIARIA</h2>
 
-      <button
-        onClick={toggleInventory}
-        className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl"
-      >
-        Inventario
-      </button>
-
-      {showInventory && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-2xl shadow-2xl w-11/12 max-w-5xl max-h-[80vh] overflow-y-auto">
-            <h2 className="text-2xl font-bold mb-4">Inventario de Ejercicios</h2>
-            <table className="w-full border border-gray-300 text-sm">
-              <thead className="bg-gray-100 cursor-pointer select-none">
+          {loadingQuest && <p>Cargando quest...</p>}
+          {questError && <p style={{ color: 'red' }}>{questError}</p>}
+          
+          {dailyQuest && (
+            <table className="daily-quest-table">
+              <thead>
                 <tr>
-                  <th onClick={() => handleSort('nivelMinimo')} className="py-2 px-4 border">Nivel mínimo {renderSortArrow('nivelMinimo')}</th>
-                  <th onClick={() => handleSort('grupo')} className="py-2 px-4 border">Grupo {renderSortArrow('grupo')}</th>
-                  <th onClick={() => handleSort('nombre')} className="py-2 px-4 border">Nombre {renderSortArrow('nombre')}</th>
-                  <th onClick={() => handleSort('descripcion')} className="py-2 px-4 border">Descripción {renderSortArrow('descripcion')}</th>
-                  <th className="py-2 px-4 border">Agregar</th>
+                  <th>Ejercicio</th>
+                  <th>Nivel</th>
+                  <th>Repeticiones</th>
+                  <th>Completado</th>
+                  <th>Más</th>
                 </tr>
               </thead>
               <tbody>
-                {sortedExercises.map((ejer, index) => (
-                  <tr key={index} className="hover:bg-gray-50">
-                    <td className="py-2 px-4 border text-center">{ejer.nivelMinimo}</td>
-                    <td className="py-2 px-4 border text-center capitalize">{ejer.grupo}</td>
-                    <td className="py-2 px-4 border">{ejer.nombre}</td>
-                    <td className="py-2 px-4 border">{ejer.descripcion}</td>
-                    <td className="py-2 px-4 border text-center">
+                {dailyQuest.map((ejer) => (
+                  <tr key={ejer._id}>
+                    <td>{ejer.nombre}</td>
+                    <td className="text-center">Nv.{ejer.nivel}</td>
+                    <td className="text-center">{ejer.repeticiones}</td>
+                    <td className="text-center">
                       <button
-                        className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded"
-                        onClick={() => handleAddToQuest(ejer._id)}
+                        className={`daily-quest-button ${completedExercises[ejer._id] ? 'completed' : ''}`}
+                        onClick={() => handleCompleteExercise(ejer._id)}
+                        disabled={completedExercises[ejer._id]}
                       >
-                        +
+                        {completedExercises[ejer._id] ? 'Completo' : 'Completar'}
                       </button>
                     </td>
+                    <td className="text-center">
+                    <button
+                      className="daily-quest-button"
+                      onClick={() => setSelectedExercise(ejer)}
+                    >Ver más</button>
+                  </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            <button
-              onClick={toggleInventory}
-              className="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl"
-            >
-              Cerrar
-            </button>
-          </div>
+          )}
         </div>
-      )}
+
+        {/* Modal con más detalles */}
+        {selectedExercise && (
+          <div
+            className="inventory-modal"
+            onClick={() => setSelectedExercise(null)}
+          >
+            <div
+              className="inventory-content"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h2 className="window-title">{selectedExercise.nombre}</h2>
+              <p><strong>XP:</strong> {selectedExercise.xp}</p>
+              <p><strong>Grupo:</strong> {selectedExercise.grupo}</p>
+              <p><strong>Descripción:</strong> {selectedExercise.descripcion}</p>
+              <p className="text-center">
+                      <button
+                        onClick={() => handleRemoveFromQuest(selectedExercise._id)}
+                        className="red-button"
+                      >
+                        Quitar ejercicio
+                      </button>
+                    </p>
+
+              <button
+                onClick={() => setSelectedExercise(null)}
+                className="daily-quest-button bg-red-500 mt-4"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        )}
+
+        
+      </div>
+      <button onClick={toggleInventory} className="daily-quest-button mt-4">
+          Inventario
+        </button>
+
+        {showInventory && (
+          <div className="inventory-modal">
+            <div className="inventory-content">
+              <h2 className="window-title">Inventario de Ejercicios</h2>
+              <button onClick={toggleInventory} className="daily-quest-button mt-4 bg-red-500 hover:bg-red-600">
+                Cerrar
+              </button>
+              <table className="status-window">
+                <thead>
+                  <tr>
+                    <th onClick={() => handleSort('nivelMinimo')}>Nivel mínimo {renderSortArrow('nivelMinimo')}</th>
+                    <th onClick={() => handleSort('grupo')}>Grupo {renderSortArrow('grupo')}</th>
+                    <th onClick={() => handleSort('nombre')}>Nombre {renderSortArrow('nombre')}</th>
+                    <th onClick={() => handleSort('descripcion')}>Descripción {renderSortArrow('descripcion')}</th>
+                    <th>Agregar</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sortedExercises.map((ejer, index) => (
+                    <tr key={index}>
+                      <td className="text-center">{ejer.nivelMinimo}</td>
+                      <td className="text-center capitalize">{ejer.grupo}</td>
+                      <td>{ejer.nombre}</td>
+                      <td>{ejer.descripcion}</td>
+                      <td className="text-center">
+                        <button
+                          className="add-button"
+                          onClick={() => handleAddToQuest(ejer._id)}
+                        >
+                          +
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
     </div>
-  );
+  
+);
 }

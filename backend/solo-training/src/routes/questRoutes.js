@@ -94,37 +94,45 @@ async function questRoutes(fastify, options) {
   });
 
 
-  // 3. Marcar ejercicio como completado/incompleto
+  // 3. Marcar ejercicio como completado
   fastify.put('/quest/complete', {
     schema: {
       body: {
         type: 'object',
-        required: ['questExerciseId', 'completado'],
+        required: ['exerciseId'],
         properties: {
-          questExerciseId: { type: 'string' },
-          completado: { type: 'boolean' }
+          exerciseId: { type: 'string' },
         }
       }
     },
     preHandler: [fastify.authenticate],
     handler: async (request, reply) => {
-      const { questExerciseId, completado } = request.body;
+      const { exerciseId } = request.body;
       const jugadorId = request.user.jugadorId;
 
       try {
+        const jugador = await db.collection('players').findOne({ _id: new ObjectId(jugadorId) });
+        if (!jugador) return reply.code(404).send({ message: 'Jugador no encontrado' });
+
+        const ejercicio = jugador.questDiaria.find(e => e._id.toString() === exerciseId);
+        if (!ejercicio) return reply.code(404).send({ message: 'Ejercicio no encontrado' });
+
+        const nuevaXp = (ejercicio.xp || 0) + 1;
+        const nuevoNivel = Math.floor(nuevaXp / 3) + 1;
+
         const result = await db.collection('players').updateOne(
           {
             _id: new ObjectId(jugadorId),
-            'questDiaria._id': new ObjectId(questExerciseId)
+            'questDiaria._id': new ObjectId(exerciseId)
           },
           {
-            $set: { 'questDiaria.$.completado': completado }
+            $set: {
+              'questDiaria.$.completado': true,
+              'questDiaria.$.xp': nuevaXp,
+              'questDiaria.$.nivel': nuevoNivel
+            }
           }
         );
-
-        if (result.modifiedCount === 0) {
-          return reply.code(404).send({ message: 'Ejercicio de quest no encontrado' });
-        }
 
         reply.send({ message: 'Estado actualizado correctamente' });
       } catch (err) {

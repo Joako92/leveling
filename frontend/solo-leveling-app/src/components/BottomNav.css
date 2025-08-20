@@ -1,0 +1,64 @@
+/* BottomNav.css */
+
+/* Contenedor principal */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #1a1a1a;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 8px 0;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.5);
+  border-top: 2px solid #ff4c4c;
+  z-index: 50;
+}
+
+/* Botones de cada tab */
+.tab-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 0.75rem;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.tab-button .icon {
+  font-size: 1.5rem;
+  margin-bottom: 3px;
+  transition: all 0.2s;
+}
+
+/* Glow cuando está activo */
+.tab-button.active {
+  color: #ff4c4c;
+}
+
+.tab-button.active .icon {
+  color: #ff4c4c;
+  filter: drop-shadow(0 0 6px #ff4c4c);
+  transform: scale(1.2);
+}
+
+/* Hover effect */
+.tab-button:hover {
+  color: #ff8c00;
+}
+
+.tab-button:hover .icon {
+  filter: drop-shadow(0 0 6px #ff8c00);
+  transform: scale(1.15);
+}
+
+/* Responsive: ocultar labels en pantallas pequeñas */
+@media (max-width: 500px) {
+  .tab-button .label {
+    display: none;
+  }
+}

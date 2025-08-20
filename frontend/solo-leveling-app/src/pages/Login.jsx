@@ -10,12 +10,10 @@ function Login() {
     const [error, setError] = useState("");
     const navigate = useNavigate();
 
-    // Manejar cambios en los inputs
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    // Enviar datos al backend
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
@@ -32,9 +30,9 @@ function Login() {
             });
 
             const token = response.data.token;
-            localStorage.setItem("token", token); // Guardar JWT en localStorage
+            localStorage.setItem("token", token);
             alert("Inicio de sesión exitoso");
-            navigate("/status"); // Redirigir al estado del jugador
+            navigate("/status");
         } catch (err) {
             console.error("Error en el login:", err.response?.data || err.message);
             setError(err.response?.data?.error || "Credenciales incorrectas");
@@ -42,41 +40,43 @@ function Login() {
     };
 
     return (
-        <div style={styles.container}>
-            <h2>Iniciar Sesión</h2>
-            {error && <p style={{ color: "red" }}>{error}</p>}
-            <form onSubmit={handleSubmit} style={styles.form}>
-                <label>Email:</label>
-                <input type="email" name="email" value={formData.email} onChange={handleChange} required />
+        <div className="home-container">
+            <div className="status-window">
+                <h2>- Iniciar Sesión -</h2>
+                {error && <p style={{ color: "red" }}>{error}</p>}
 
-                <label>Contraseña:</label>
-                <input type="password" name="password" value={formData.password} onChange={handleChange} required />
+                <form onSubmit={handleSubmit} className="form-container">
+                    <label>Email:</label>
+                    <input 
+                        type="email" 
+                        name="email" 
+                        value={formData.email} 
+                        onChange={handleChange} 
+                        required 
+                        className="input-field"
+                    />
 
-                <button type="submit">Ingresar</button>
-                <p>
-                <a href="/forgot-password" className="text-sm text-blue-500 hover:underline">
-                    ¿Olvidaste tu contraseña?
-                </a>
-                </p>
-            </form>
+                    <label>Contraseña:</label>
+                    <input 
+                        type="password" 
+                        name="password" 
+                        value={formData.password} 
+                        onChange={handleChange} 
+                        required 
+                        className="input-field"
+                    />
+
+                    <button type="submit" className="red-button">Ingresar</button>
+
+                    <p>
+                        <a href="/forgot-password" className="link">
+                            ¿Olvidaste tu contraseña?
+                        </a>
+                    </p>
+                </form>
+            </div>
         </div>
     );
 }
-
-// Estilos en línea para el formulario en columna
-const styles = {
-    container: {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        marginTop: "20px",
-    },
-    form: {
-        display: "flex",
-        flexDirection: "column",
-        width: "300px",
-        gap: "10px",
-    }
-};
 
 export default Login;

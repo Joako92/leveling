@@ -28,7 +28,7 @@ fastify.decorate("authenticate", async (request, reply) => {
 // Registrar rutas
 fastify.register(require('./routes/playerRoutes'));
 fastify.register(require('./routes/questRoutes'));
-//fastify.register(require('./routes/calendarRoutes'));
+fastify.register(require('./routes/calendarRoutes'));
 fastify.register(require('./routes/userRoutes'));
 fastify.register(require('./routes/exerciseRoutes'));
 

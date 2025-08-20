@@ -1,0 +1,74 @@
+.calendar-container {
+  background: linear-gradient(to bottom, #1b1b1b, #2a2a2a);
+  border: 3px solid #d4af37;
+  border-radius: 16px;
+  padding: 1rem 1.5rem;
+  max-width: 400px;
+  margin: 2rem auto;
+  font-family: 'Orbitron', sans-serif;
+  color: #fff;
+  box-shadow: 0 0 15px rgba(212,175,55,0.5);
+}
+
+.window-title {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #ffd700;
+  text-shadow: 0 0 4px #ffb347;
+}
+
+.racha-card {
+  background-color: #2e2e2e;
+  border-radius: 12px;
+  padding: 15px 20px;
+  display: inline-block;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+.racha-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #ffd700;
+}
+
+/* Glow dinámico según clase */
+.racha-low {
+  border: 2px solid #ff4c4c;
+  box-shadow: 0 0 10px #ff4c4c;
+}
+.racha-mid {
+  border: 2px solid #ff8c00;
+  box-shadow: 0 0 15px #ff8c00;
+}
+.racha-high {
+  border: 2px solid #ffd700;
+  box-shadow: 0 0 20px #ffd700;
+}
+
+.days-list {
+  list-style: none;
+  padding: 0;
+}
+
+.days-list li {
+  background-color: #2e2e2e;
+  border-left: 4px solid #ffd700;
+  padding: 10px 15px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  box-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.divider {
+  border: 0;
+  height: 1px;
+  background: #d4af37;
+  margin: 0.5rem 0;
+  opacity: 0.5;
+}
