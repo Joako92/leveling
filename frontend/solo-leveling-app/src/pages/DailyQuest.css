@@ -160,7 +160,7 @@
 }
 
 .inventory-content {
-  background-color: #1e1e2f;
+  background: linear-gradient(to bottom, #1b1b1b, #2a2a2a);
   padding: 1.5rem;
   border-radius: 24px;
   max-width: 5xl;

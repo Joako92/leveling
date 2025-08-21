@@ -78,7 +78,7 @@ async function questRoutes(fastify, options) {
           const ejercicio = await db.collection('exercises').findOne({ _id: new ObjectId(ej.ejercicioId) });
 
           const nivelActual = ej.nivel || 1;
-          const config = ejercicio?.niveles?.[nivelActual.toString()] || {};
+          const config = ejercicio?.niveles?.[nivelActual.toString()] || null;
 
           return {
             ...ej,
@@ -118,7 +118,7 @@ async function questRoutes(fastify, options) {
         if (!ejercicio) return reply.code(404).send({ message: 'Ejercicio no encontrado' });
 
         const nuevaXp = (ejercicio.xp || 0) + 1;
-        const nuevoNivel = Math.floor(nuevaXp / 3) + 1;
+        const nuevoNivel = Math.min(5, Math.floor(nuevaXp / 3) + 1);
 
         const result = await db.collection('players').updateOne(
           {

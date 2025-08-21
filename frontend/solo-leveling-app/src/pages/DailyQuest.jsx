@@ -10,8 +10,45 @@ export default function DailyQuest() {
   const [loadingQuest, setLoadingQuest] = useState(true);
   const [questError, setQuestError] = useState(null);
   const [selectedExercise, setSelectedExercise] = useState(null);
-  const [completedExercises, setCompletedExercises] = useState({}); // Al cambiar de pagina vuelve al estado inicial TODO!
+  const [player, setPlayer] = useState(null);
 
+  const today = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
+
+  // Cargar al jugador
+  useEffect(() => {
+    const fetchPlayerStatus = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          setError("Usuario no autenticado");
+          return;
+        }
+  
+        const user = JSON.parse(atob(token.split(".")[1]));
+        let storedPlayerId = localStorage.getItem("jugadorId") || user.jugadorId;
+  
+        if (!storedPlayerId) {
+          setPlayerId(null);
+          return;
+        }
+  
+        setPlayerId(storedPlayerId);
+  
+        const response = await axios.get(`http://localhost:3000/players/${storedPlayerId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+  
+        setPlayer(response.data);
+      } catch (err) {
+        console.error("Error al obtener el estado del jugador:", err);
+        setError("Error al cargar los datos del jugador");
+      }
+    };
+  
+    fetchPlayerStatus();
+  }, []);  
+
+  // Cargar quest del jugador logeado
   const fetchDailyQuest = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -148,37 +185,57 @@ export default function DailyQuest() {
 
   // Marcar ejercicio como completo
   const handleCompleteExercise = async (exerciseId) => {
-    try {
-      const token = localStorage.getItem('token');
+  try {
+    const token = localStorage.getItem('token');
 
-      const response = await fetch('http://localhost:3000/quest/complete', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ exerciseId }),
-      });
+    const response = await fetch('http://localhost:3000/quest/complete', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ exerciseId }),
+    });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Error al completar ejercicio');
-      }
-
-      const data = await response.json();
-      console.log('Ejercicio completado: ', data);
-
-      fetchDailyQuest();
-    } catch (error) {
-      console.error('Error al completar ejercicio: ', error.message);
-      alert('No se pudo completar el ejercicio: ' + error.message);
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Error al completar ejercicio');
     }
 
-    setCompletedExercises((prev) => ({
-      ...prev,
-      [exerciseId]: true,
-    }));
-  };
+    await fetchDailyQuest(); // ✅ vuelve a cargar desde la base
+  } catch (error) {
+    console.error('Error al completar ejercicio: ', error.message);
+    alert('No se pudo completar el ejercicio: ' + error.message);
+  }
+};
+
+// Completar la quest diaria
+  const handleCompleteQuest = async () => {
+  try {
+    const token = localStorage.getItem('token');
+
+    const response = await fetch('http://localhost:3000/calendar/complete', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || error.details || 'Error al completar quest');
+    }
+
+    alert('Quest completada!')
+    await fetchDailyQuest(); // ✅ vuelve a cargar desde la base
+  } catch (error) {
+    console.error('Error al completar quest: ', error.message);
+    alert('No se pudo completar la quest diaria: ' + error.message);
+  }
+};
+
+const isQuestCompletedToday = player?.calendar?.includes(today);
+
 
   return (
     <div className='home-container'>
@@ -204,15 +261,15 @@ export default function DailyQuest() {
                 {dailyQuest.map((ejer) => (
                   <tr key={ejer._id}>
                     <td>{ejer.nombre}</td>
-                    <td className="text-center">Nv.{ejer.nivel}</td>
-                    <td className="text-center">{ejer.repeticiones}</td>
+                    <td className="text-center">Nv.{ejer.nivel === 5 ? "Max" : `${ejer.nivel}`}</td>
+                    <td className="text-center">{ejer.repeticiones || "-"}</td>
                     <td className="text-center">
                       <button
-                        className={`daily-quest-button ${completedExercises[ejer._id] ? 'completed' : ''}`}
+                        className={`daily-quest-button ${ejer.completado ? 'completed' : ''}`}
                         onClick={() => handleCompleteExercise(ejer._id)}
-                        disabled={completedExercises[ejer._id]}
+                        disabled={ejer.completado}
                       >
-                        {completedExercises[ejer._id] ? 'Completo' : 'Completar'}
+                        {ejer.completado ? 'Completo' : 'Completar'}
                       </button>
                     </td>
                     <td className="text-center">
@@ -261,51 +318,59 @@ export default function DailyQuest() {
           </div>
         )}
 
+      <button
+        className="daily-quest-button mt-2"
+        onClick={handleCompleteQuest}
+        disabled={isQuestCompletedToday}
+      >
+        {isQuestCompletedToday ? 'Quest completada!' : 'Completar quest diaria'}
+      </button>
         
       </div>
       <button onClick={toggleInventory} className="daily-quest-button mt-4">
-          Inventario
-        </button>
+        Inventario
+      </button>
 
-        {showInventory && (
-          <div className="inventory-modal">
-            <div className="inventory-content">
-              <h2 className="window-title">Inventario de Ejercicios</h2>
-              <button onClick={toggleInventory} className="daily-quest-button mt-4 bg-red-500 hover:bg-red-600">
-                Cerrar
-              </button>
-              <table className="status-window">
-                <thead>
-                  <tr>
-                    <th onClick={() => handleSort('nivelMinimo')}>Nivel mínimo {renderSortArrow('nivelMinimo')}</th>
-                    <th onClick={() => handleSort('grupo')}>Grupo {renderSortArrow('grupo')}</th>
-                    <th onClick={() => handleSort('nombre')}>Nombre {renderSortArrow('nombre')}</th>
-                    <th onClick={() => handleSort('descripcion')}>Descripción {renderSortArrow('descripcion')}</th>
-                    <th>Agregar</th>
+      {/* Inventario de ejercicios */}
+      {showInventory && (
+        <div className="inventory-modal">
+          <div className="inventory-content">
+            <h2 className="window-title">Inventario de Ejercicios</h2>
+            <button onClick={toggleInventory} className="daily-quest-button mt-4 bg-red-500 hover:bg-red-600">
+              Cerrar
+            </button>
+            <table className="status-window">
+              <thead>
+                <tr>
+                  <th onClick={() => handleSort('nivelMinimo')}>Nivel mínimo {renderSortArrow('nivelMinimo')}</th>
+                  <th onClick={() => handleSort('grupo')}>Grupo {renderSortArrow('grupo')}</th>
+                  <th onClick={() => handleSort('nombre')}>Nombre {renderSortArrow('nombre')}</th>
+                  <th onClick={() => handleSort('descripcion')}>Descripción {renderSortArrow('descripcion')}</th>
+                  <th>Agregar</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortedExercises.map((ejer, index) => (
+                  <tr key={index}>
+                    <td className="text-center">{ejer.nivelMinimo}</td>
+                    <td className="text-center capitalize">{ejer.grupo}</td>
+                    <td>{ejer.nombre}</td>
+                    <td>{ejer.descripcion}</td>
+                    <td className="text-center">
+                      <button
+                        className="add-button"
+                        onClick={() => handleAddToQuest(ejer._id)}
+                      >
+                        +
+                      </button>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {sortedExercises.map((ejer, index) => (
-                    <tr key={index}>
-                      <td className="text-center">{ejer.nivelMinimo}</td>
-                      <td className="text-center capitalize">{ejer.grupo}</td>
-                      <td>{ejer.nombre}</td>
-                      <td>{ejer.descripcion}</td>
-                      <td className="text-center">
-                        <button
-                          className="add-button"
-                          onClick={() => handleAddToQuest(ejer._id)}
-                        >
-                          +
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
-        )}
+        </div>
+      )}
     </div>
   
 );
