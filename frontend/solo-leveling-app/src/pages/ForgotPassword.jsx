@@ -17,22 +17,28 @@ function ForgotPassword() {
     }
   };
 
+  // to do !
   return (
-    <form onSubmit={handleSubmit} className="p-4 max-w-md mx-auto">
-      <h2 className="text-lg font-bold mb-4">Recuperar contraseña</h2>
-      <input
-        type="email"
-        placeholder="Tu email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="border p-2 w-full mb-2"
-        required
-      />
-      <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
-        Enviar enlace
-      </button>
-      {mensaje && <p className="mt-2 text-sm">{mensaje}</p>}
-    </form>
+    <div className="home-container">
+      <div className="status-window">
+        <h2>- Recuperar contraseña -</h2>
+        
+        <form onSubmit={handleSubmit} className="form-container">
+          <input
+            type="email"
+            placeholder="Tu email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="input-field"
+            required
+          />
+          <button type="submit" className="red-button">
+            Enviar enlace
+          </button>
+          {mensaje && <p className="mt-2 text-sm">{mensaje}</p>}
+        </form>
+      </div>
+    </div>
   );
 }
 

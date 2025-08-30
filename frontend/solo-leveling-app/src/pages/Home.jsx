@@ -28,11 +28,12 @@ function Home() {
 
       <div className="status-window">
         <h2>- Bienvenido Jugador -</h2>
-        <button className="red-button" onClick={() => navigate("/register")}>
-          Registrarme
-        </button>
+        {/* Botones */}
         <button className="red-button" onClick={() => navigate("/login")}>
           Iniciar Sesión
+        </button>
+        <button className="red-button" onClick={() => navigate("/register")}>
+          Registrarme
         </button>
       </div>
     </div>

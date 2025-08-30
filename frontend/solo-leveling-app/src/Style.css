@@ -19,6 +19,7 @@ body {
   min-height: 100vh; /* Ocupa toda la pantalla */
   align-items: center; /* centra horizontalmente */
   padding-bottom: 80px; /* deja espacio para el bottomNav */
+  padding-top: 60px;
 }
 
 /* Logo */

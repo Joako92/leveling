@@ -54,6 +54,8 @@ const PlayerStatus = () => {
       <div className="status-window">
         <h2 className="window-title">VENTANA DE ESTADO</h2>
 
+        
+
         <div className="section general-info">
           <p><strong>Nombre:</strong> {player.nombre} <strong>Nivel:</strong> {player.nivel}</p>
           <p><strong>Rango:</strong> {player.rango} <strong>Título:</strong> {player.titulo}</p>

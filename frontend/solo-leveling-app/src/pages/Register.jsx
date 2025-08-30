@@ -40,40 +40,65 @@ function Register() {
         }
     };
 
+    // Formulario
     return (
-        <div style={styles.container}>
-            <h2>Registro</h2>
-            {error && <p style={{ color: "red" }}>{error}</p>}
-            <form onSubmit={handleSubmit} style={styles.form}>
-                <label>Email:</label>
-                <input type="email" name="email" value={formData.email} onChange={handleChange} required />
+        <div className="home-container">
+            <div className="status-window">
+                <h2>- Registro -</h2>
+                {error && <p style={{ color: "red" }}>{error}</p>}
 
-                <label>Contraseña:</label>
-                <input type="password" name="password" value={formData.password} onChange={handleChange} required />
+                <form onSubmit={handleSubmit} className="form-container">
+                    <label>Email:</label>
+                    <input 
+                        type="email" 
+                        name="email" 
+                        value={formData.email} 
+                        onChange={handleChange} 
+                        required 
+                        className="input-field"
+                    />
 
-                <label>Confirmar Contraseña:</label>
-                <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required />
+                    <label>Contraseña:</label>
+                    <input 
+                        type="password" 
+                        name="password" 
+                        value={formData.password} 
+                        onChange={handleChange} 
+                        required 
+                        className="input-field"
+                    />
 
-                <button type="submit">Registrarse</button>
-            </form>
+                    <label>Confirmar Contraseña:</label>
+                    <input 
+                        type="password" 
+                        name="confirmPassword" 
+                        value={formData.confirmPassword} 
+                        onChange={handleChange} 
+                        required 
+                        className="input-field"
+                    />
+
+                    <button type="submit" className="red-button">Registrarse</button>
+                </form>
+            </div>
         </div>
     );
 }
 
 // Estilos en línea para mostrar el formulario en columna
-const styles = {
-    container: {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        marginTop: "20px",
-    },
-    form: {
-        display: "flex",
-        flexDirection: "column",
-        width: "300px",
-        gap: "10px",
-    }
-};
+// const styles = {
+//     container: {
+//         display: "flex",
+//         flexDirection: "column",
+//         alignItems: "center",
+//         marginTop: "20px",
+//     },
+//     form: {
+//         display: "flex",
+//         flexDirection: "column",
+//         width: "300px",
+//         gap: "10px",
+//     }
+// };
 
 export default Register;

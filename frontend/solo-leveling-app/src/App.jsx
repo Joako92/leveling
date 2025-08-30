@@ -11,7 +11,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import { isAuthenticated } from './utils/auth';
 import BottomNav from './components/BottomNav';
-import LogoutButton from './components/LogoutButton';
+import TopNav from './components/TopNav';
 
 function AppContent() {
   const location = useLocation();
@@ -20,7 +20,8 @@ function AppContent() {
 
   return (
     <div className="pb-14">
-      <LogoutButton />
+      <TopNav />
+      
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/status" element={<PlayerStatus />} />

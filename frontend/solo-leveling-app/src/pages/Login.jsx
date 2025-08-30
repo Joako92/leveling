@@ -31,14 +31,14 @@ function Login() {
 
             const token = response.data.token;
             localStorage.setItem("token", token);
-            alert("Inicio de sesión exitoso");
             navigate("/status");
         } catch (err) {
             console.error("Error en el login:", err.response?.data || err.message);
             setError(err.response?.data?.error || "Credenciales incorrectas");
         }
     };
-
+    
+    // formulario
     return (
         <div className="home-container">
             <div className="status-window">
@@ -71,6 +71,11 @@ function Login() {
                     <p>
                         <a href="/forgot-password" className="link">
                             ¿Olvidaste tu contraseña?
+                        </a>
+                    </p>
+                    <p>
+                        <a href="/register" className="link">
+                            ¿No tenés cuenta? Registrarse
                         </a>
                     </p>
                 </form>
