@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const ResetPassword = () => {
   const [searchParams] = useSearchParams();
@@ -8,6 +9,7 @@ const ResetPassword = () => {
   const [newPassword, setNewPassword] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,23 +39,48 @@ const ResetPassword = () => {
     return <p>❌ El enlace no es válido o falta el token.</p>;
   }
 
+  // to do styles
   return (
-    <div style={{ maxWidth: '400px', margin: 'auto' }}>
-      <h2>Restablecer Contraseña</h2>
-      <form onSubmit={handleSubmit}>
-        <label>Nueva Contraseña:</label>
-        <input
-          type="password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Cambiar contraseña</button>
-      </form>
+    <div className="home-container">
+      <div className="status-window">
+      <h2>- Restablecer Contraseña -</h2>
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {message && <p style={{ color: 'green' }}>{message}</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+        <form onSubmit={handleSubmit} className="form-container">
+          <label>Nueva Contraseña:</label>
+          <div style={{ position: "relative", width: "100%" }}>
+            <input
+              type={showPassword ? "text" : "password"} 
+              name="password" 
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+              className="input-field"
+              style={{ width: "100%", paddingRight: "40px" }}
+            />
+            <span 
+              onClick={() => setShowPassword(!showPassword)} 
+              style={{
+                  position: "absolute",
+                  right: "12px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  cursor: "pointer",
+                  color: "#555"
+              }}
+            >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </span>
+          </div>
+          
+          <button type="submit" className="red-button">Cambiar contraseña</button>
+        </form>
+
+        {message && <p style={{ color: 'green' }}>{message}</p>}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+      </div>
     </div>
+    
   );
 };
 

@@ -52,9 +52,7 @@ const PlayerStatus = () => {
   return (
     <div className="home-container">
       <div className="status-window">
-        <h2 className="window-title">VENTANA DE ESTADO</h2>
-
-        
+        <h2 className="window-title">- VENTANA DE ESTADO -</h2>
 
         <div className="section general-info">
           <p><strong>Nombre:</strong> {player.nombre} <strong>Nivel:</strong> {player.nivel}</p>

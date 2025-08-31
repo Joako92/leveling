@@ -57,16 +57,18 @@
   overflow: hidden;    /* Mantener el borde limpio */
 }
 
-/* Envuelve la tabla en un contenedor scrollable */
-.daily-quest-table {
-  display: block;
-  max-height: 350px;    /* Limita altura de la tabla */
-  overflow-y: auto;     /* Scroll vertical */
-  overflow-x: auto;     /* Scroll horizontal si hace falta */
-  border-radius: 12px;
-  border-collapse: collapse;
+/* Wrapper que maneja el scroll */
+.daily-quest-table-wrapper {
   width: 100%;
-  font-size: 0.9rem;    /* Texto un poquito más compacto */
+  overflow-x: auto;
+  border-radius: 12px;
+}
+
+/* Tabla normal */
+.daily-quest-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
 }
 
 /* Asegura que las celdas largas hagan salto de línea */

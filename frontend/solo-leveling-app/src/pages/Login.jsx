@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 function Login() {
     const [formData, setFormData] = useState({
@@ -9,6 +10,7 @@ function Login() {
     });
     const [error, setError] = useState("");
     const navigate = useNavigate();
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -57,14 +59,30 @@ function Login() {
                     />
 
                     <label>Contraseña:</label>
-                    <input 
-                        type="password" 
-                        name="password" 
-                        value={formData.password} 
-                        onChange={handleChange} 
-                        required 
-                        className="input-field"
-                    />
+                    <div style={{ position: "relative", width: "100%" }}>
+                        <input 
+                            type={showPassword ? "text" : "password"} 
+                            name="password" 
+                            value={formData.password} 
+                            onChange={handleChange} 
+                            required 
+                            className="input-field"
+                            style={{ width: "100%", paddingRight: "40px" }}
+                        />
+                        <span 
+                            onClick={() => setShowPassword(!showPassword)} 
+                            style={{
+                                position: "absolute",
+                                right: "12px",
+                                top: "50%",
+                                transform: "translateY(-50%)",
+                                cursor: "pointer",
+                                color: "#555"
+                            }}
+                        >
+                            {showPassword ? <FaEyeSlash /> : <FaEye />}
+                        </span>
+                    </div>
 
                     <button type="submit" className="red-button">Ingresar</button>
 

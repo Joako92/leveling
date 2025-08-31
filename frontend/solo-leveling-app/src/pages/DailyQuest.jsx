@@ -11,16 +11,16 @@ export default function DailyQuest() {
   const [questError, setQuestError] = useState(null);
   const [selectedExercise, setSelectedExercise] = useState(null);
   const [player, setPlayer] = useState(null);
+  const [playerId, setPlayerId] = useState(null);
 
   const today = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
 
   // Cargar al jugador
-  useEffect(() => {
-    const fetchPlayerStatus = async () => {
+  const fetchPlayerStatus = async () => {
       try {
         const token = localStorage.getItem("token");
         if (!token) {
-          setError("Usuario no autenticado");
+          setQuestError("Usuario no autenticado");
           return;
         }
   
@@ -34,17 +34,19 @@ export default function DailyQuest() {
   
         setPlayerId(storedPlayerId);
   
-        const response = await axios.get(`http://localhost:3000/players/${storedPlayerId}`, {
+        const response = await fetch(`http://localhost:3000/players/${storedPlayerId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
   
-        setPlayer(response.data);
+        const data = await response.json();
+        setPlayer(data);
       } catch (err) {
         console.error("Error al obtener el estado del jugador:", err);
-        setError("Error al cargar los datos del jugador");
+        setQuestError("Error al cargar los datos del jugador");
       }
     };
-  
+
+  useEffect(() => {
     fetchPlayerStatus();
   }, []);  
 
@@ -209,6 +211,7 @@ export default function DailyQuest() {
   }
 };
 
+// TODO! que se complete cada ejercicio en esta funcion
 // Completar la quest diaria
   const handleCompleteQuest = async () => {
   try {
@@ -228,6 +231,7 @@ export default function DailyQuest() {
 
     alert('Quest completada!')
     await fetchDailyQuest(); // ✅ vuelve a cargar desde la base
+    await fetchPlayerStatus();
   } catch (error) {
     console.error('Error al completar quest: ', error.message);
     alert('No se pudo completar la quest diaria: ' + error.message);
@@ -236,52 +240,53 @@ export default function DailyQuest() {
 
 const isQuestCompletedToday = player?.calendar?.includes(today);
 
-
   return (
     <div className='home-container'>
-      <div className="daily-quest-window">
+      <div className="status-window">
         <div className="mb-4">
-          <h2 className="window-title">QUEST DIARIA</h2>
+          <h2 className="window-title">- QUEST DIARIA -</h2>
 
           {loadingQuest && <p>Cargando quest...</p>}
           {questError && <p style={{ color: 'red' }}>{questError}</p>}
           
           {dailyQuest && (
-            <table className="daily-quest-table">
-              <thead>
-                <tr>
-                  <th>Ejercicio</th>
-                  <th>Nivel</th>
-                  <th>Repeticiones</th>
-                  <th>Completado</th>
-                  <th>Más</th>
-                </tr>
-              </thead>
-              <tbody>
-                {dailyQuest.map((ejer) => (
-                  <tr key={ejer._id}>
-                    <td>{ejer.nombre}</td>
-                    <td className="text-center">Nv.{ejer.nivel === 5 ? "Max" : `${ejer.nivel}`}</td>
-                    <td className="text-center">{ejer.repeticiones || "-"}</td>
-                    <td className="text-center">
-                      <button
-                        className={`daily-quest-button ${ejer.completado ? 'completed' : ''}`}
-                        onClick={() => handleCompleteExercise(ejer._id)}
-                        disabled={ejer.completado}
-                      >
-                        {ejer.completado ? 'Completo' : 'Completar'}
-                      </button>
-                    </td>
-                    <td className="text-center">
-                    <button
-                      className="daily-quest-button"
-                      onClick={() => setSelectedExercise(ejer)}
-                    >Ver más</button>
-                  </td>
+            <div className="daily-quest-table-wrapper">
+              <table className="daily-quest-table">
+                <thead>
+                  <tr>
+                    <th>Ejercicio</th>
+                    <th>Nivel</th>
+                    <th>Repeticiones</th>
+                    {/* <th>Completado</th> */}
+                    <th>Más</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {dailyQuest.map((ejer) => (
+                    <tr key={ejer._id}>
+                      <td>{ejer.nombre}</td>
+                      <td className="text-center">Nv.{ejer.nivel === 5 ? "Max" : `${ejer.nivel}`}</td>
+                      <td className="text-center">{ejer.repeticiones || "-"}</td>
+                      {/* <td className="text-center">
+                        <button
+                          className={`daily-quest-button ${ejer.completado ? 'completed' : ''}`}
+                          onClick={() => handleCompleteExercise(ejer._id)}
+                          disabled={ejer.completado}
+                        >
+                          {ejer.completado ? 'Completo' : 'Completar'}
+                        </button>
+                      </td> */}
+                      <td className="text-center">
+                      <button
+                        className="daily-quest-button"
+                        onClick={() => setSelectedExercise(ejer)}
+                      >Ver más</button>
+                    </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
 

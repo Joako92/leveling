@@ -55,7 +55,7 @@ function Calendar() {
   return (
     <div className='home-container'>
       <div className="status-window">
-        <h2 className="window-title">CALENDARIO</h2>
+        <h2 className="window-title">- CALENDARIO -</h2>
         <div className="racha-card">
           <h2>Racha: {racha}</h2>
         </div>
